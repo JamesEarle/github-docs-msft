@@ -1,5 +1,34 @@
 ﻿extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h2 Microsoft GitHub Contributions
+  if data
+    span= data
+  else
+    span No data.
+  p.lead.
+    Get a look at employee contributions to a specific Microsoft repository below. 
+    To get started, you'll need to authenticate and have push access to any non-private repos.
+  .text-left
+    form(action="login" method="POST")
+      .form-group
+        label(for="username") Username
+        input(type="text" placeholder="JohnSmith" name="username").form-control#username
+      .form-group
+        label(for="password") Password
+        input(type="password" placeholder="Password" name="password").form-control#password
+      .text-center
+        button(type="submit").btn.btn-primary Login
+    hr
+    if open
+      h3.title #{symbol} Prediction - #{date}
+      ul.results
+        mixin list(title, val)
+          li
+            h4.list-item #{title}: #{val}
+        +list("Open", open)
+        +list("High", high)
+        +list("Low", low)
+        +list("Volume", volume)
+        +list("Close (Actual)", close)
+        +list("Close (Predicted)", scoredlabels)
