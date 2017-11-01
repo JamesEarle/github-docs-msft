@@ -7,6 +7,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var GitHub = require('github-api');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
