@@ -2,33 +2,20 @@
 
 block content
   h2 Microsoft GitHub Contributions
-  if data
-    span= data
-  else
-    span No data.
   p.lead.
     Get a look at employee contributions to a specific Microsoft repository below. 
     To get started, you'll need to authenticate and have push access to any non-private repos.
+  p.lead.
+    See if a specific user is a member of an org below.
   .text-left
-    form(action="login" method="POST")
+    form(action="submit" method="POST")
       .form-group
-        label(for="username") Username
-        input(type="text" placeholder="JohnSmith" name="username").form-control#username
+        label(for="user") Username
+        input(type="text" placeholder="JohnSmith" name="user" value="JamesEarle").form-control#user
       .form-group
-        label(for="password") Password
-        input(type="password" placeholder="Password" name="password").form-control#password
+        label(for="org") Organization Name
+        input(type="text" placeholder="Organization" name="org" value="Microsoft").form-control#org
       .text-center
         button(type="submit").btn.btn-primary Login
     hr
-    if open
-      h3.title #{symbol} Prediction - #{date}
-      ul.results
-        mixin list(title, val)
-          li
-            h4.list-item #{title}: #{val}
-        +list("Open", open)
-        +list("High", high)
-        +list("Low", low)
-        +list("Volume", volume)
-        +list("Close (Actual)", close)
-        +list("Close (Predicted)", scoredlabels)
+    h3.title #{result}
