@@ -65,19 +65,23 @@ exports.default_auth = function (req, res) {
 
                 console.log(i + " - " + req.body.org + "/" + repoName);
                 //console.log("\n");
-                (function () {
+                (function (repoName) {
                     repo.getContributors().then(list => {
                         for (i = 0; i < list.data.length; i++) {
                             (function (i) {
-                                console.log(i + " - " + list.data[i].login + ", " + namehold);
+                                console.log(i + " - " + list.data[i].login + ", " + repoName);
                             })(i);
                         }
+                    }).catch(reason => {
+                        console.log("Reason: " + reason);
                     })
-                })();
+                })(repoName);
             })();
         }
     }).then(result => {
         res.render('index', { result: result });
+    }).catch(reason => {
+        console.log(reason);
     });
 
     //console.log(repoList.then(t => { return "resolved it yo" }));
