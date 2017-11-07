@@ -1,21 +1,39 @@
 ﻿extends layout
 
 block content
-  h2 Microsoft GitHub Contributions
-  p.lead.
-    Get a look at employee contributions to a specific Microsoft repository below. 
-    To get started, you'll need to authenticate and have push access to any non-private repos.
-  p.lead.
-    See if a specific user is a member of an org below.
-  .text-left
-    form(action="submit" method="POST")
-      .form-group
-        label(for="user") Username
-        input(type="text" placeholder="JohnSmith" name="user" value="JamesEarle").form-control#user
-      .form-group
-        label(for="org") Organization Name
-        input(type="text" placeholder="Organization" name="org" value="Microsoft").form-control#org
-      .text-center
-        button(type="submit").btn.btn-primary Login
-    hr
-    h3.title #{result}
+	h2 Microsoft GitHub Contributions
+	//-- h3 Authenticated Access
+	//-- p.lead.
+		Get a look at employee contributions to a specific Microsoft repository below. 
+		To get started, you'll need to authenticate and have push access to any non-private repos.
+	//-- .text-left
+		form(action="login" method="POST")
+			.form-group
+				label(for="user") Username
+				input(type="text" placeholder="JohnSmith" name="user").form-control#user
+			.form-group
+				label(for="pass") Password
+				input(type="password" placeholder="Password" name="pass").form-control#pass
+			.text-center
+				button(type="submit").btn.btn-primary Login
+	//--hr
+	h3 Authenticated Access as James Earle
+	p.lead.
+		If you don't want to authenticate, you can still view public repositories using the form below.
+	.text-left
+		form(action="def-auth" method="POST")
+			.form-group
+				label(for="user") Username
+				input(type="text" placeholder="JohnSmith" name="user" value="JamesEarle").form-control#user
+			.form-group
+				label(for="org") Organization
+				input(type="org" placeholder="BrockCSC" name="org" value="BrockCSC").form-control#org
+			.text-center
+				button(type="submit").btn.btn-primary Login
+		if result	
+			hr
+			h3.title Result
+			ul
+				each val in result
+					li
+						span= val

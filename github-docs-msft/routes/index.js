@@ -6,53 +6,99 @@ exports.index = function (req, res) {
     res.render('index');
 };
 
-exports.submit = function (req, res) {
-    //var orgname = req.body.org;
+exports.login = function (req, res) {
+    var user = req.body.user;
+    var pass = req.body.pass;
 
-    // what if they didn't fork the repo?
-    // just search contributors of the repo object, don't have to have cloned
+    var gh = new GitHub({
+        //username: user,
+        //password: pass,
+        token: "d097566f39d3a260458a83c9a2adf68540fc2a31"
+    });
 
-    var gh = new GitHub();
-    var username = req.body.user;
+    var me = gh.getUser();
 
-    var org = "MicrosoftDocs";
+    var msdocs = gh.getOrganization("MicrosoftDocs");
 
-    var user = gh.getUser(username);
-    var msdocs = gh.getOrganization(org);
 
-    msdocs.getRepos().then(list => {
-        console.log(list.data.length);
+    me.listOrgs().then(list => {
+        console.log(list);
+
+        var filtered_list = [];
         for (var i = 0; i < list.data.length; i++) {
-            var name = list.data[i].name;
+            var name = list.data[i].login;
             console.log(name);
-            var repo = gh.getRepo(org, name);
-            // check isContributor to speed this up
-            repo.getContributors().then((list, name) => {
-                for (var i = 0; i < list.data.length; i++) {
-                    console.log(list.data[i].login + " made " + list.data[i].contributions + " contributions to MicrosoftDocs/" + name);
-                    //if (list.data[i].login === username) {
-                    //    console.log();
-                    //}
-                }
-            });
+            filtered_list.push(name);
         }
+
+        res.render('index', { result: filtered_list });
     }).catch(reason => {
         console.log(reason);
     });
+};
 
-    res.render('index');
+exports.default_auth = function (req, res) {
 
-    //user.listRepos().then(list => {
-    //    console.log(list);
-    //    res.render('index', { result: JSON.stringify(list.data) });
-    //})
+    var gh = new GitHub({
+        token: "d097566f39d3a260458a83c9a2adf68540fc2a31"
+    });
 
-    //var org = gh.getOrganization(orgname);
+    var username = gh.getUser(req.body.user);
+    var msdocs = gh.getOrganization(req.body.org);
 
-    //org.isMember(username).then(result => {
-    //    console.log("Result: " + result);
-    //    res.render('index', { result: result });
+    //var namehold;
+
+    msdocs.getRepos().then(list => {
+        var result = [];
+        for (var i = 0; i < list.data.length; i++) {
+            result.push(list.data[i].name);
+        }
+        //res.render('index', { result: result });
+        return result;
+    }).then(data => {
+        var namehold;
+        for (var i = 0; i < data.length; i++) {
+            (function () {
+                var repoName = data[i];
+                namehold = repoName;
+                var repo = gh.getRepo(req.body.org, repoName);
+
+                console.log(i + " - " + req.body.org + "/" + repoName);
+                //console.log("\n");
+                (function () {
+                    repo.getContributors().then(list => {
+                        for (i = 0; i < list.data.length; i++) {
+                            (function (i) {
+                                console.log(i + " - " + list.data[i].login + ", " + namehold);
+                            })(i);
+                        }
+                    })
+                })();
+            })();
+        }
+    }).then(result => {
+        res.render('index', { result: result });
+    });
+
+    //console.log(repoList.then(t => { return "resolved it yo" }));
+
+    //msdocs.getRepos().then((list) => {
+    //    var results = [];
+    //    console.log(list.data.length);
+    //    for (var i = 0; i < list.data.length; i++) {
+    //        var name = list.data[i].name;
+    //        namehold = name;
+    //        var repo = gh.getRepo(req.body.org, name);
+    //        // check isContributor to speed this up
+    //        repo.getContributors().then(list => {
+    //            for (var i = 0; i < list.data.length; i++) {
+    //                results.push(list.data[i].login + ", " + list.data[i].contributions + ", " + namehold)
+    //            }
+    //        });
+    //    }
+    //}).then(results => {
+    //    res.render('index', { result: results });
     //}).catch(reason => {
     //    console.log(reason);
     //});
-}
+};
