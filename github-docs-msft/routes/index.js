@@ -1,5 +1,6 @@
 ﻿'use strict';
 var GitHub = require('github-api');
+var private = require('../private');
 
 /* GET home page. */
 exports.index = function (req, res) {
@@ -11,9 +12,7 @@ exports.login = function (req, res) {
     var pass = req.body.pass;
 
     var gh = new GitHub({
-        //username: user,
-        //password: pass,
-        token: "d097566f39d3a260458a83c9a2adf68540fc2a31"
+        token: private.token
     });
 
     var me = gh.getUser();
@@ -40,7 +39,7 @@ exports.login = function (req, res) {
 exports.default_auth = function (req, res) {
 
     var gh = new GitHub({
-        token: "d097566f39d3a260458a83c9a2adf68540fc2a31"
+        token: private.token
     });
 
     var username = gh.getUser(req.body.user);
