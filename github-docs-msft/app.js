@@ -27,8 +27,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
-app.post('/login', routes.login);
-app.post('/def-auth', routes.default_auth);
+//app.post('/login', routes.login);
+app.post('/submit', routes.submit);
 
 
 // catch 404 and forward to error handler

@@ -1,6 +1,6 @@
 ﻿'use strict';
 var GitHub = require('github-api');
-var private = require('../private');
+var priv = require('../private');
 
 /* GET home page. */
 exports.index = function (req, res) {
@@ -8,77 +8,76 @@ exports.index = function (req, res) {
 };
 
 exports.login = function (req, res) {
-    var user = req.body.user;
-    var pass = req.body.pass;
+    //var user = req.body.user;
+    //var pass = req.body.pass;
 
-    var gh = new GitHub({
-        token: private.token
-    });
+    //var gh = new GitHub({
+    //    token: priv.token
+    //});
 
-    var me = gh.getUser();
+    //var me = gh.getUser();
 
-    var msdocs = gh.getOrganization("MicrosoftDocs");
+    //var msdocs = gh.getOrganization("MicrosoftDocs");
 
 
-    me.listOrgs().then(list => {
-        console.log(list);
+    //me.listOrgs().then(list => {
+    //    console.log(list);
 
-        var filtered_list = [];
-        for (var i = 0; i < list.data.length; i++) {
-            var name = list.data[i].login;
-            console.log(name);
-            filtered_list.push(name);
-        }
+    //    var filtered_list = [];
+    //    for (var i = 0; i < list.data.length; i++) {
+    //        var name = list.data[i].login;
+    //        console.log(name);
+    //        filtered_list.push(name);
+    //    }
 
-        res.render('index', { result: filtered_list });
-    }).catch(reason => {
-        console.log(reason);
-    });
+    //    res.render('index', { result: filtered_list });
+    //}).catch(reason => {
+    //    console.log(reason);
+    //});
 };
 
-exports.default_auth = function (req, res) {
+exports.submit = function (req, res) {
 
     var gh = new GitHub({
-        token: private.token
+        token: priv.token
     });
 
     var username = gh.getUser(req.body.user);
     var msdocs = gh.getOrganization(req.body.org);
-
-    //var namehold;
 
     msdocs.getRepos().then(list => {
         var result = [];
         for (var i = 0; i < list.data.length; i++) {
             result.push(list.data[i].name);
         }
-        //res.render('index', { result: result });
         return result;
     }).then(data => {
-        var namehold;
+        var user = req.body.user;
+        //var arr = [];
+        console.log(user);
         for (var i = 0; i < data.length; i++) {
             (function () {
                 var repoName = data[i];
-                namehold = repoName;
                 var repo = gh.getRepo(req.body.org, repoName);
 
-                console.log(i + " - " + req.body.org + "/" + repoName);
-                //console.log("\n");
+                //console.log(i + " - " + req.body.org + "/" + repoName);
                 (function (repoName) {
                     repo.getContributors().then(list => {
-                        for (i = 0; i < list.data.length; i++) {
-                            (function (i) {
-                                console.log(i + " - " + list.data[i].login + ", " + repoName);
-                            })(i);
-                        }
+                        let contribs = list.data.filter(c => c.login === req.body.user)
+                            .map(c => ({ "repoName": repoName, "contribs": c.contributions }));
+
+                        res.render('/index', {
+                            name: req.body.user,
+                            contribs: contribs
+                        });
                     }).catch(reason => {
                         console.log("Reason: " + reason);
-                    })
+                    });
                 })(repoName);
             })();
         }
     }).then(result => {
-        res.render('index', { result: result });
+        //res.render('index', { name: "Out Here"});
     }).catch(reason => {
         console.log(reason);
     });
