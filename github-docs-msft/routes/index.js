@@ -44,9 +44,9 @@ exports.submit = function (req, res) {
     });
 
     var username = gh.getUser(req.body.user);
-    var msdocs = gh.getOrganization(req.body.org);
+    var org = gh.getOrganization(req.body.org);
 
-    msdocs.getRepos().then(list => {
+    org.getRepos().then(list => {
         var result = [];
         for (var i = 0; i < list.data.length; i++) {
             result.push(list.data[i].name);
@@ -56,10 +56,12 @@ exports.submit = function (req, res) {
         var user = req.body.user;
         console.log(user);
 
-        data.forEach(repoName => {
+        let myArray = [];
+
+        let promiseArray = data.map(repoName => {
             let repo = gh.getRepo(req.body.org, repoName);
 
-            repo.getContributors().then(contributors => {
+            return repo.getContributors().then(contributors => {
                 let userArray = contributors.data.filter(c => c.login === req.body.user);
 
                 if (userArray.length != 0) {
@@ -68,18 +70,44 @@ exports.submit = function (req, res) {
                         repo: req.body.org + "/" + repoName,
                         contribs: userArray[0].contributions
                     };
-                    res.myArray.push(obj);
+                    console.log(obj);
+                    myArray.push(obj);
                     return obj;
-                }
-            }).then(arr => {
-                if (arr) {
-                    console.log(arr);
                 }
             });
         });
 
+        Promise.all(promiseArray).then(data => {
+            // res.render?
+            console.log(data);
+        });
+
+        console.log(myArray);
+
+
+        //data.forEach(repoName => {
+        //    let repo = gh.getRepo(req.body.org, repoName);
+
+        //    repo.getContributors().then(contributors => {
+        //        let userArray = contributors.data.filter(c => c.login === req.body.user);
+
+        //        if (userArray.length != 0) {
+        //            let obj = {
+        //                name: req.body.user,
+        //                repo: req.body.org + "/" + repoName,
+        //                contribs: userArray[0].contributions
+        //            };
+        //            myArray.push(obj);
+        //            return obj;
+        //        }
+        //    }).then(obj => {
+        //        if (obj) {
+        //            console.log(obj);
+        //        }
+        //    });
+        //});
+
         // still 0...
-        console.log(res.myArray);
 
         //console.log(thing);
 
