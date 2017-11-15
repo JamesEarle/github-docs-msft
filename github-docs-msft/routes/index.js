@@ -43,7 +43,7 @@ exports.submit = function (req, res) {
         token: priv.token
     });
 
-    var username = gh.getUser(req.body.user);
+    //var username = gh.getUser(req.body.user);
     var org = gh.getOrganization(req.body.org);
 
     org.getRepos().then(list => {
@@ -62,17 +62,19 @@ exports.submit = function (req, res) {
             let repo = gh.getRepo(req.body.org, repoName);
 
             return repo.getContributors().then(contributors => {
-                let userArray = contributors.data.filter(c => c.login === req.body.user);
+                if (contributors.data) {
+                    let userArray = contributors.data.filter(c => c.login === req.body.user);
 
-                if (userArray.length != 0) {
-                    let obj = {
-                        name: req.body.user,
-                        repo: req.body.org + "/" + repoName,
-                        contribs: userArray[0].contributions
-                    };
-                    console.log(obj);
-                    myArray.push(obj);
-                    return obj;
+                    if (userArray.length != 0) {
+                        let obj = {
+                            name: req.body.user,
+                            repo: req.body.org + "/" + repoName,
+                            contribs: userArray[0].contributions
+                        };
+                        console.log(obj);
+                        myArray.push(obj);
+                        return obj;
+                    }
                 }
             });
         });
@@ -90,6 +92,10 @@ exports.submit = function (req, res) {
                 res.render('index', {
                     name: results[0].name,
                     contribs: results
+                });
+            } else {
+                res.render('index', {
+                    message: "No results for " + req.body.user
                 });
             }
             console.log(results);

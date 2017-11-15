@@ -24,17 +24,20 @@ block content
 		form(action="submit" method="POST")
 			.form-group
 				label(for="user") Username
-				input(type="text" placeholder="JohnSmith" name="user" value="JamesEarle").form-control#user
+				input(type="text" placeholder="JohnSmith" name="user").form-control#user
 			.form-group
 				label(for="org") Organization
-				input(type="org" placeholder="BrockCSC" name="org" value="BrockCSC").form-control#org
+				input(type="org" placeholder="MicrosoftDocs" name="org").form-control#org
 			.text-center
 				button(type="submit").btn.btn-primary Login
+		if message
+			hr
+			h3.title #{message}
 		if name
 			hr
 			h3.title Results for #{name}
 			ul
 				each row in contribs
 					li
-						span #{row.repo}						
-						span #{row.contribs}
+						span #{row.repo} - 					
+						span #{row.contribs} contributions.
