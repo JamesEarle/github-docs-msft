@@ -79,85 +79,63 @@ exports.submit = function (req, res) {
 
         Promise.all(promiseArray).then(data => {
             // res.render?
-            console.log(data);
+            let results = [];
+            data.forEach(contrib => {
+                if (contrib) {
+                    results.push(contrib);
+                }
+            })
+
+            if (results.length > 0) {
+                res.render('index', {
+                    name: results[0].name,
+                    contribs: results
+                });
+            }
+            console.log(results);
         });
 
         console.log(myArray);
 
+        // from Jeremy
+        // *****
+        ////when finished, contributorFetches contains an array of Promises
+        //let  contributorFetches  =  data.map(repoName  =>  {
+        //    let  repo  =  gh.getRepo(req.body.org,  repoName);
 
-        //data.forEach(repoName => {
-        //    let repo = gh.getRepo(req.body.org, repoName);
+        //    //this return is returning a promise... that's because getContributors() returns
+        //    //a promise as do any then() functions appended to it
+        //    return  repo.getContributors()
 
-        //    repo.getContributors().then(contributors => {
-        //        let userArray = contributors.data.filter(c => c.login === req.body.user);
+        //        //this extra then() just makes the code more readable
+        //        //it rightly calls the parameter "response" because that's what it is
+        //        //then it returns the data (which we know to be the contributors)
+        //        .then(response  =>  response.data)
 
-        //        if (userArray.length != 0) {
-        //            let obj = {
-        //                name: req.body.user,
-        //                repo: req.body.org + "/" + repoName,
-        //                contribs: userArray[0].contributions
-        //            };
-        //            myArray.push(obj);
-        //            return obj;
-        //        }
-        //    }).then(obj => {
-        //        if (obj) {
-        //            console.log(obj);
-        //        }
-        //    });
+        //        //then this then() calls its parameter contributors
+        //        .then(contributors  =>  {
+        //            contributors
+        //                //filter the list down to the one that matches the current user
+        //                //at this level, I like to use a single-letter parameter name like 'c'
+        //                .filter(c  =>  c.login  ===  req.body.user)
+
+        //                //and return the object you want to be the "payload" of the promise
+        //                .map(c  =>  ({
+        //                    name:  req.body.user,
+        //                    repo:  `${req.body.org}/${repoName}`,
+        //                    contribs:  c.contributions
+        //                }))
+        //        })
         //});
 
-        // still 0...
+        //Promise.all(contributorFetches).then( cf  =>  {
+        //    //cf is an array of whatever each of the promises returned, which we determined
+        //    //(which our contributors.filter.map) to be an array of {name,repo,contribs}
+        //})
+        // *****
 
-        //console.log(thing);
-
-        //for (var i = 0; i < data.length; i++) {
-        //    (function () {
-        //        var repoName = data[i];
-        //        var repo = gh.getRepo(req.body.org, repoName);
-
-        //        //console.log(i + " - " + req.body.org + "/" + repoName);
-        //        (function (repoName) {
-        //            repo.getContributors().then(list => {
-
-        //                let contribs = list.data.filter(c => c.login === req.body.user)
-        //                    .map(c => ({ "repoName": repoName, "contribs": c.contributions }));
-
-        //                res.render('/index', {
-        //                    name: req.body.user,
-        //                    contribs: contribs
-        //                });
-        //            }).catch(reason => {
-        //                console.log("Reason: " + reason);
-        //            });
-        //        })(repoName);
-        //    })();
-        //}
-    }).then(result => {
-        //res.render('index', { name: "Out Here"});
+        
     }).catch(reason => {
         console.log(reason);
     });
-
-    //console.log(repoList.then(t => { return "resolved it yo" }));
-
-    //msdocs.getRepos().then((list) => {
-    //    var results = [];
-    //    console.log(list.data.length);
-    //    for (var i = 0; i < list.data.length; i++) {
-    //        var name = list.data[i].name;
-    //        namehold = name;
-    //        var repo = gh.getRepo(req.body.org, name);
-    //        // check isContributor to speed this up
-    //        repo.getContributors().then(list => {
-    //            for (var i = 0; i < list.data.length; i++) {
-    //                results.push(list.data[i].login + ", " + list.data[i].contributions + ", " + namehold)
-    //            }
-    //        });
-    //    }
-    //}).then(results => {
-    //    res.render('index', { result: results });
-    //}).catch(reason => {
-    //    console.log(reason);
-    //});
 };

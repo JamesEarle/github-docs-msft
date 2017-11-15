@@ -32,10 +32,9 @@ block content
 				button(type="submit").btn.btn-primary Login
 		if name
 			hr
-			h3.title Result for #{name}
-			if array
-				ul
-					each record in contribs
-						li
-							span #{record.repoName}						
-							span #{record.contribs}
+			h3.title Results for #{name}
+			ul
+				each row in contribs
+					li
+						span #{row.repo}						
+						span #{row.contribs}
